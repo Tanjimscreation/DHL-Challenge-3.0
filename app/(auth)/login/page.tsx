@@ -4,14 +4,13 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Eye, EyeOff, Mail, Lock, Info } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { DhlLogo } from '@/components/dhl-logo'
 import { LoadingSpinner } from '@/components/loading-spinner'
 import { login, getCurrentUser } from '@/lib/auth-store'
-import { demoAccounts } from '@/lib/mock-data'
 import { toast } from 'sonner'
 
 export default function LoginPage() {
@@ -52,9 +51,7 @@ export default function LoginPage() {
     }
   }
 
-  const fillDemo = (email: string) => {
-    setFormData({ email, password: 'password123' })
-  }
+
 
   return (
     <motion.div
@@ -141,37 +138,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Demo Accounts Panel */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.2, ease: 'easeOut' }}
-        className="mt-6 bg-[#1E1E1E]/50 rounded-xl p-5 border border-dhl-yellow/20"
-      >
-        <div className="flex items-center gap-2 mb-3">
-          <Info className="w-4 h-4 text-dhl-yellow" />
-          <span className="text-xs font-semibold uppercase tracking-wide text-dhl-yellow">
-            Demo Accounts
-          </span>
-        </div>
-        <div className="space-y-2">
-          {demoAccounts.map((account) => (
-            <button
-              key={account.email}
-              onClick={() => fillDemo(account.email)}
-              className="w-full flex items-center justify-between p-3 rounded-lg bg-[#141414] hover:bg-[#1E1E1E] border border-white/5 hover:border-dhl-yellow/30 transition-colors text-left"
-            >
-              <div>
-                <p className="text-white text-sm font-medium">{account.email}</p>
-                <p className="text-[#666] text-xs">Password: {account.password}</p>
-              </div>
-              <span className="text-xs font-semibold uppercase tracking-wide px-2 py-1 rounded bg-dhl-yellow/10 text-dhl-yellow">
-                {account.role}
-              </span>
-            </button>
-          ))}
-        </div>
-      </motion.div>
+
     </motion.div>
   )
 }
