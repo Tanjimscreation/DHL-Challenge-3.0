@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-dhl-border;
+  }
+  body {
+    @apply font-barlow bg-dhl-light text-dhl-dark;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-dhl-red text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-dhl-yellow text-dhl-dark font-semibold py-2 px-4 rounded-lg hover:bg-yellow-400 transition-colors duration-200;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-dhl-border;
+  }
+  
+  .card-dark {
+    @apply bg-dhl-dark text-white rounded-xl shadow-sm border border-dhl-border;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border border-dhl-border rounded-lg focus:outline-none focus:ring-2 focus:ring-dhl-red focus:border-transparent;
+  }
+  
+  .label-text {
+    @apply block text-xs font-semibold uppercase tracking-wider text-dhl-muted mb-1;
+  }
+}
