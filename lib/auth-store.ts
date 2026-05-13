@@ -5,18 +5,24 @@ import { mockUsers } from './mock-data'
 
 const AUTH_KEY = 'resolviq_auth'
 const USERS_KEY = 'resolviq_users'
+const PASSWORDS_KEY = 'resolviq_passwords'
 
-function getStoredUsers(): User[] {
-  if (typeof window === 'undefined') return mockUsers
+// Store user data with passwords separately for security simulation
+type StoredUser = User & { password?: string }
+
+function getStoredUsers(): StoredUser[] {
+  if (typeof window === 'undefined') return mockUsers.map(u => ({ ...u, password: 'password123' }))
   const stored = localStorage.getItem(USERS_KEY)
   if (stored) {
     return JSON.parse(stored)
   }
-  localStorage.setItem(USERS_KEY, JSON.stringify(mockUsers))
-  return mockUsers
+  // Initialize with mock users (password: password123 for all)
+  const initialUsers = mockUsers.map(u => ({ ...u, password: 'password123' }))
+  localStorage.setItem(USERS_KEY, JSON.stringify(initialUsers))
+  return initialUsers
 }
 
-function saveUsers(users: User[]) {
+function saveUsers(users: StoredUser[]) {
   if (typeof window === 'undefined') return
   localStorage.setItem(USERS_KEY, JSON.stringify(users))
 }
@@ -40,7 +46,6 @@ export function setCurrentUser(user: User | null) {
 }
 
 export function login(email: string, password: string): { success: boolean; user?: User; error?: string } {
-  // Simple mock authentication - in real app, this would verify against Supabase
   const users = getStoredUsers()
   const user = users.find(u => u.email.toLowerCase() === email.toLowerCase())
   
@@ -48,13 +53,15 @@ export function login(email: string, password: string): { success: boolean; user
     return { success: false, error: 'No account found with this email' }
   }
   
-  // For demo, password is 'password123' for all mock users
-  if (password !== 'password123') {
+  // Check password against stored password
+  if (user.password !== password) {
     return { success: false, error: 'Invalid password' }
   }
   
-  setCurrentUser(user)
-  return { success: true, user }
+  // Remove password from user object before storing in session
+  const { password: _, ...userWithoutPassword } = user
+  setCurrentUser(userWithoutPassword)
+  return { success: true, user: userWithoutPassword }
 }
 
 export function signup(data: {
@@ -70,10 +77,11 @@ export function signup(data: {
     return { success: false, error: 'An account with this email already exists' }
   }
   
-  const newUser: User = {
+  const newUser: StoredUser = {
     id: crypto.randomUUID(),
     name: data.name,
     email: data.email,
+    password: data.password, // Store the password
     role: data.role,
     employeeId: data.employeeId,
     createdAt: new Date().toISOString()
@@ -82,7 +90,9 @@ export function signup(data: {
   users.push(newUser)
   saveUsers(users)
   
-  return { success: true, user: newUser }
+  // Return user without password
+  const { password: _, ...userWithoutPassword } = newUser
+  return { success: true, user: userWithoutPassword }
 }
 
 export function logout() {
